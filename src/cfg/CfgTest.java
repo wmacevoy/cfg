@@ -51,12 +51,16 @@ class CfgTest
   } 
     }
 
-
+    void testRealPath() {
+        Cfg cfg = new Cfg("/cfg/self-test/messages");
+        assert cfg.realPath("../misc/version").equals("/cfg/self-test/misc/version");
+    }
+                                                      
     void testStringParameters() {
         Cfg cfg = new Cfg("/cfg/self-test");
 
-        assert cfg.getString("messages/hi").equals("hello, world!");
-        assert cfg.getString("messages/version").equals("3.14");
+        println(cfg.getString("messages/hi"));
+        assert cfg.getString("messages/hi").equals("good morning, dave. this is version 3.14");
         assert cfg.getString("misc/home").equals(System.getenv("HOME"));
     }
 
