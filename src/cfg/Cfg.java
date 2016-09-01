@@ -18,11 +18,22 @@ import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
 import java.util.TreeMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.nio.charset.Charset;
 
 public class Cfg 
 {
     String root;
+
+    HashMap<String,Function> functions = new HashMap<String,Function>() {{
+            put("",new GetStringFunction());
+            put("raw",new GetRawStringFunction());
+            put("env",new GetEnvFunction());
+            put("encrypt",new EncryptFunction());
+            put("decrypt",new DecryptFunction());
+        }};
+
+    Function defaultFunction = new DefaultFunction();
 
     public Cfg() { root="/"; }
     public Cfg(String _root) { 
@@ -120,64 +131,12 @@ public class Cfg
             ArrayList<String> args = new ArrayList<String>();
             pos = parseArgs(raw,pos,args);
 
-            if (id.equals("") && args.size() == 1) {
-                String arg = cook(base,args.get(0)).trim();
-                if (!arg.startsWith("/")) {
-                    arg = base + arg;
-                }
-                arg = getString(arg);
-                cooked.append(arg);
-                continue;
-            }
+            Function f = functions.get(id);
 
-            if (id.equals("raw") && args.size() == 1) {
-                String arg = cook(base,args.get(0)).trim();
-                if (!arg.startsWith("/")) {
-                    arg = base + arg;
-                }
-                arg = getRawString(arg);
-                cooked.append(arg);
-                continue;
+            if (f == null || (f.args() != -1 && f.args() != args.size())) {
+                f = defaultFunction;
             }
-
-            if (id.equals("env") && args.size() == 1) {
-                String arg = cook(base,args.get(0)).trim();
-                cooked.append(System.getenv(arg));
-                continue;
-            }
-
-            if (id.equals("trim") && args.size() == 1) {
-                String arg = cook(base,args.get(0)).trim();
-                cooked.append(arg);
-                continue;
-            }
-
-            if (id.equals("decrypt") && args.size() == 2) {
-                String key = cook(base,args.get(0));
-                String secret = cook(base,args.get(1));
-                String plain = decrypt(key,secret);
-                cooked.append(plain);
-                continue;
-            } 
-
-            if (id.equals("encrypt") && args.size() == 2) {
-                String key = cook(base,args.get(0));
-                String plain = cook(base,args.get(1));
-                cooked.append(encrypt(key,plain));
-                continue;
-            }
-
-            cooked.append("$");
-            cooked.append(id);
-            if (args.size() > 0) {
-                cooked.append("{");
-                for (int i=0; i<args.size(); ++i) {
-                    if (i > 0) cooked.append(",");
-                    cooked.append(args.get(i));
-                }
-                cooked.append("}");
-            }
-            continue;
+            cooked.append(f.eval(this,base,id,args));
         }
         return cooked.toString();
     }
