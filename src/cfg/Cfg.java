@@ -51,8 +51,9 @@ public class Cfg
     }
     
     static boolean isId0(char ch) {
-        return Character.isLetter(ch) || ch == '-' || ch == '_';
+        return Character.isLetter(ch);
     }
+
     static boolean isId1(char ch) {
         return Character.isLetter(ch) || Character.isDigit(ch) || ch == '-' || ch == '_';
     }
