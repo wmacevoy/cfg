@@ -62,7 +62,10 @@ class CfgTest
 
     void testDecrypt() {
         Cfg cfg = new Cfg("/cfg/self-test/misc/db");
-        setenv("KEY","secret");
+        String key = "secret";
+        String pass = "867-5209";
+        setenv("KEY",key);
+        println("encpass: " + encrypt(key,pass));
         assert cfg.getString("user").equals("dbadmin");
         assert cfg.getString("pass").equals("867-5209");
     }
