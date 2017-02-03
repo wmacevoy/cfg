@@ -1,4 +1,4 @@
-# Cfg - Managing secret configuration with open version control.
+# Cfg - Manage secret configuration even with open version control.
 
 ## Step 1 - Require the cfg artifact, using a maven `pom.xml` this would be the following dependency:
 
@@ -77,35 +77,3 @@ Your configuration (with secret parts encrypted) is now safely managed in throug
 * `$encrypt{key,plain}` -- AES-128 GCM with 16-byte padding using the SHA256 hash of key as the encryption key and hex encoded result.
 * `$decrypt{key,cipher}` -- reverse of encrypt.
 * `$pattern{PATTERN}` -- cryptographically strong random pattern generation.  Supports `ABC...`, `(A|B|C..)`, `[abc]`, `[a-z]`, `A{min,max}` and `A{num}` patterns.
-
-
-
-<Create an XML configuration
-
-project
-│   README.md
-│   file001.txt    
-│
-└───folder1
-│   │   file011.txt
-│   │   file012.txt
-│   │
-│   └───subfolder1
-│       │   file111.txt
-│       │   file112.txt
-│       │   ...
-│   
-└───folder2
-    │   file021.txt
-    │   file022.txt
-```
-
-Projects have the problem of managing application and authorization keys, which need to be shared by the team, but essentially should not be available to the public, but conf
-
-
-
-Cfg was desined to address the problem of addressing source control
-principles to configuration data, even when that configuration data
-is supposed to be secret.
-
-This is particularly difficult for open-source projects.
