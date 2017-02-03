@@ -1,4 +1,96 @@
-# Cfg - Getting configuration under control
+# Cfg - Managing secret configuration with open version control.
+
+## Step 1 - Require the cfg artifact, using a maven `pom.xml` this would be the following dependency:
+
+```
+    <dependencies>
+      <dependency>
+	<groupId>com.github.wmacevoy</groupId>
+	<artifactId>cfg</artifactId>
+	<version>1.0</version>
+      </dependency>
+    </dependencies>
+```
+
+## Step 2 - Decide on symmetric master dev key(s) to share.
+
+For a small project this is probably one random key you could share via LastPass for example.  If you have access to the cfg jar file, you can generate cryptographically strong patterned keys with
+
+```
+java -cp /path/to/cfg.jar cfg.Cfg '$random{PATTERN}'
+```
+
+where PATTERN is a regex-like pattern for the randomness
+
+* `ABC...`  pattern A followed by pattern B, etc.
+* `(A|B|...)` a randomly selected pattern A or B, etc.
+* `P{min,max}` P repeated between min and max (defaults to min) times.
+* `[set]` a random letter from the set (supports ranges)
+
+Some useful examples
+
+* `[A-Za-z0-9]{8-12}` from 8 to 12 alphanumeric characters (ex: `h75dQ0GypEsG`).
+* `(rock|paper|scissors)` one random pick (ex: `paper`).
+* `[0-9a-f]{2}(:[0-9a-f]{2}){5}` mac-like address (ex: `cd:bd:de:5d:be:29`)
+
+## Step 3: Share and set the key.
+
+Set an environment variable with the master key (the name and value does not matter, but you need to share this with the dev team).
+
+```
+export CFG_KEY="cd:bd:de:5d:be:29"
+java -cp /path/to/cfg.jar cfg.Cfg '$encrypt{${$env{CFG_KEY},db-password}'
+```
+
+## Step 5: Store your encrypted configuration in the resources for your project (src/main/resources/cfg/db.xml, etc)
+
+```
+<db>
+  <user>db-user</user>
+  <password>$decrypt{$env{CFG_KEY},${password-cipher}}</password>
+  <cipher>bf55718cec74b7e650e8767a520858b1e2db2f79c5892d4149f2f794b7ff028d68b1808d4f5fe2937e5f0bd0</cipher>
+</db>
+```
+
+## Step 6 -- load/use configuration.
+Assuming the CFG_KEY environment variable is correctly set,
+
+```
+Cfg cfg = new Cfg("cfg");
+String dbUser = cfg.getString("db/user");
+String dbPass = cfg.getString("db/password");
+```
+
+## Step 7 --- Rejoice!
+
+Your configuration (with secret parts encrypted) is now safely managed in through source control and conveniently split into as many components as is useful.
+
+
+
+
+<Create an XML configuration
+
+project
+│   README.md
+│   file001.txt    
+│
+└───folder1
+│   │   file011.txt
+│   │   file012.txt
+│   │
+│   └───subfolder1
+│       │   file111.txt
+│       │   file112.txt
+│       │   ...
+│   
+└───folder2
+    │   file021.txt
+    │   file022.txt
+```
+
+Projects have the problem of managing application and authorization keys, which need to be shared by the team, but essentially should not be available to the public, but conf
+
+
 
 Cfg was desined to address the problem of addressing source control
 principles to configuration data, even when that configuration data
