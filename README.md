@@ -19,7 +19,6 @@ For a small project this is probably one random key you could share via LastPass
 ```
 java -cp /path/to/cfg.jar cfg.Cfg '$random{PATTERN}'
 ```
-
 Here PATTERN is a regex-like pattern for the randomness
 
 * `ABC...`  pattern A followed by pattern B, etc.
@@ -35,7 +34,7 @@ Some useful examples
 
 ## Step 3: Share and set the key.
 
-Set an environment variable with the master key (the name and value does not matter, but you need to share this with the dev team).
+Set an environment variable with the master key (the name and value does not matter, but you need to share this with the dev team NOT in the repository).
 
 ```
 export CFG_KEY="8f38:a082:d902:fb19:3f91:9881:429e:096e:2636"
@@ -69,7 +68,6 @@ String dbPassword = cfg.getString("db/password");
 ## Step 7 --- Rejoice!
 
 Your configuration (with secret parts encrypted) is now safely managed in through source control and conveniently split into as many components as is useful.
-
 
 # Functions
 
