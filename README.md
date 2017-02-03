@@ -5,9 +5,9 @@
 ```
     <dependencies>
       <dependency>
-	<groupId>com.github.wmacevoy</groupId>
-	<artifactId>cfg</artifactId>
-	<version>1.0</version>
+        <groupId>com.github.wmacevoy</groupId>
+        <artifactId>cfg</artifactId>
+        <version>1.0</version>
       </dependency>
     </dependencies>
 ```
@@ -20,7 +20,7 @@ For a small project this is probably one random key you could share via LastPass
 java -cp /path/to/cfg.jar cfg.Cfg '$random{PATTERN}'
 ```
 
-where PATTERN is a regex-like pattern for the randomness
+Here PATTERN is a regex-like pattern for the randomness
 
 * `ABC...`  pattern A followed by pattern B, etc.
 * `(A|B|...)` a randomly selected pattern A or B, etc.
@@ -31,34 +31,39 @@ Some useful examples
 
 * `[A-Za-z0-9]{8-12}` from 8 to 12 alphanumeric characters (ex: `h75dQ0GypEsG`).
 * `(rock|paper|scissors)` one random pick (ex: `paper`).
-* `[0-9a-f]{2}(:[0-9a-f]{2}){5}` mac-like address (ex: `cd:bd:de:5d:be:29`)
+* `[0-9a-f]{4}(:[0-9a-f]{4}){8}` mac-like 128 bit key (ex: `8f38:a082:d902:fb19:3f91:9881:429e:096e:2636`)
 
 ## Step 3: Share and set the key.
 
 Set an environment variable with the master key (the name and value does not matter, but you need to share this with the dev team).
 
 ```
-export CFG_KEY="cd:bd:de:5d:be:29"
-java -cp /path/to/cfg.jar cfg.Cfg '$encrypt{${$env{CFG_KEY},db-password}'
+export CFG_KEY="8f38:a082:d902:fb19:3f91:9881:429e:096e:2636"
 ```
 
-## Step 5: Store your encrypted configuration in the resources for your project (src/main/resources/cfg/db.xml, etc)
+## Step 4: Encrypt your application keys
+
+Make note of the output (it will change every time, but all the outputs will decrypt to "db-password")
+```
+java -cp target/cfg-1.0.jar cfg.Cfg '$encrypt{$env{CFG_KEY},db-password}'
+```
+## Step 5: Store your encrypted configuration in the resources for your project (src/main/resources/cfg/db.cfg, etc)
 
 ```
 <db>
   <user>db-user</user>
-  <password>$decrypt{$env{CFG_KEY},${password-cipher}}</password>
-  <cipher>bf55718cec74b7e650e8767a520858b1e2db2f79c5892d4149f2f794b7ff028d68b1808d4f5fe2937e5f0bd0</cipher>
+  <password>$decrypt{$env{CFG_KEY},${cipher}}</password>
+  <cipher>6e5bb34b4315360bd70da134b16955b6e041fa788e813afc8b60baaf5ab753bca0bb8e151127c066ec9abbb3</cipher>
 </db>
 ```
 
 ## Step 6 -- load/use configuration.
-Assuming the CFG_KEY environment variable is correctly set,
+Assuming the CFG_KEY environment variable is correctly set, and the resources are compiled into your project,
 
 ```
 Cfg cfg = new Cfg("cfg");
 String dbUser = cfg.getString("db/user");
-String dbPass = cfg.getString("db/password");
+String dbPassword = cfg.getString("db/password");
 ```
 
 ## Step 7 --- Rejoice!
