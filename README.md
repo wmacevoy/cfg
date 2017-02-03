@@ -30,14 +30,14 @@ Some useful examples
 
 * `[A-Za-z0-9]{8-12}` from 8 to 12 alphanumeric characters (ex: `h75dQ0GypEsG`).
 * `(rock|paper|scissors)` one random pick (ex: `paper`).
-* `[0-9a-f]{4}(:[0-9a-f]{4}){8}` mac-like 128 bit key (ex: `8f38:a082:d902:fb19:3f91:9881:429e:096e:2636`)
+* `[0-9a-f]{4}(:[0-9a-f]{4}){7}` mac-like 128 bit key (ex: `8f38:a082:d902:fb19:3f91:9881:429e:096e`)
 
 ## Step 3: Share and set the key.
 
 Set an environment variable with the master key (the name and value does not matter, but you need to share this with the dev team NOT in the repository).
 
 ```
-export CFG_KEY="8f38:a082:d902:fb19:3f91:9881:429e:096e:2636"
+export CFG_KEY="8f38:a082:d902:fb19:3f91:9881:429e:096e"
 ```
 
 ## Step 4: Encrypt your application keys
@@ -52,7 +52,7 @@ java -cp target/cfg-1.0.jar cfg.Cfg '$encrypt{$env{CFG_KEY},db-password}'
 <db>
   <user>db-user</user>
   <password>$decrypt{$env{CFG_KEY},${cipher}}</password>
-  <cipher>6e5bb34b4315360bd70da134b16955b6e041fa788e813afc8b60baaf5ab753bca0bb8e151127c066ec9abbb3</cipher>
+  <cipher>2f3da2aa34e978b768f8efb63f36600df5f78f71756f3feb5f7262ab99d008460409f0bef3ac473471964b3e</cipher>
 </db>
 ```
 
