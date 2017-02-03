@@ -71,6 +71,15 @@ String dbPassword = cfg.getString("db/password");
 Your configuration (with secret parts encrypted) is now safely managed in through source control and conveniently split into as many components as is useful.
 
 
+# Functions
+
+* `${path}` -- value of configuration item (supports absolute and relative addressing).
+* `$env{VAR}` -- value of environment variable.
+* `$raw{path}` -- untranslated value.
+* `$encrypt{key,plain}` -- AES-128 GCM with 16-byte padding using the SHA256 hash of key as the encryption key and hex encoded result.
+* `$decrypt{key,cipher}` -- reverse of encrypt.
+* `$pattern{PATTERN}` -- cryptographically strong random pattern generation.  Supports ABC..., (A|B|C..), [abc], [a-z], and A{min,max} and A{num} patterns.
+
 
 
 <Create an XML configuration
