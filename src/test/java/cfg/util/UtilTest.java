@@ -71,8 +71,32 @@ public class UtilTest
 	assertEquals(string(new ExIterable(null,"b")),"problem,b");	
     }
 
-    @Test public void testMeta() {
+    @Test public void testMetaNull() {
 	assertEquals(string(new MetaExceptionalIterable<String,Problem>()),"");
+    }
+
+    @Test public void testMetaElements() {
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().elements()),"");
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().elements("a")),"a");
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().elements("a","b")),"a,b");	
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().elements("a").elements()),"a");
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().elements().elements("a")),"a");
+    }
+
+    ExIterable iterable(String... strings) {
+	return new ExIterable(strings);
+    }
+
+    @Test public void testMetaIterable() {
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(iterable())),"");
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(iterable("a"))),"a");
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(iterable("a","b"))),"a,b");	
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(iterable("a")).iterable(iterable())),"a");
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(iterable()).iterable(iterable("a"))),"a");
+	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(iterable("a")).iterable(iterable("b"))),"a,b");
+    }
+
+    @Test public void testMetaFactories() {
 	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(new ExIterable())),"");
 	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(new ExIterable("a"))),"a");
 	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(new ExIterable("a","b"))),"a,b");	
@@ -82,7 +106,7 @@ public class UtilTest
 	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(new ExIterable()).iterable(new ExIterable("a"))),"a");
 	assertEquals(string(new MetaExceptionalIterable<String,Problem>().iterable(new ExIterable("a")).iterable(new ExIterable("b"))),"a,b");
     }
-
+    
     String string(Iterable<String> strings) {
 	return string(ExceptionalIterables.<String,Problem>iterable(strings));
     }
@@ -110,4 +134,40 @@ public class UtilTest
 	assertEquals(string(list("a","b").resize(4,"x")),"a,b,x,x");
     }
 
+    ExceptionalFactory<String,Problem> factory(final String string) {
+	return new ExceptionalFactory<String,Problem> () {
+	    @Override public String create() throws Problem {
+		if (string == null) throw new Problem();
+		return string;
+	    }
+	};
+    }
+
+    @Test public void testIterables() {
+	assertEquals(string(ExceptionalIterables.<String,Problem>empty()),"");
+	assertEquals(string(ExceptionalIterables.<String,Problem>iterable(list())),"");
+	assertEquals(string(ExceptionalIterables.<String,Problem>iterable(list("a"))),"a");
+	assertEquals(string(ExceptionalIterables.<String,Problem>iterable(list("a","b","c"))),"a,b,c");		
+	assertEquals(string(ExceptionalIterables.<String,Problem>elements()),"");
+	assertEquals(string(ExceptionalIterables.<String,Problem>elements("a")),"a");
+	assertEquals(string(ExceptionalIterables.<String,Problem>elements("a","b","c")),"a,b,c");		
+	assertEquals(string(ExceptionalIterables.<String,Problem>factories()),"");
+	assertEquals(string(ExceptionalIterables.<String,Problem>factories(factory("a"))),"a");
+	assertEquals(string(ExceptionalIterables.<String,Problem>factories(factory("a"),factory(null),factory("c"))),"a,problem,c");
+    }
+
+
+    @Test public void testIterators() {
+	assertEquals(string(ExceptionalIterators.<String,Problem>empty()),"");
+	assertEquals(string(ExceptionalIterators.<String,Problem>iterator(list().iterator())),"");
+	assertEquals(string(ExceptionalIterators.<String,Problem>iterator(list("a").iterator())),"a");
+	assertEquals(string(ExceptionalIterators.<String,Problem>iterator(list("a","b","c").iterator())),"a,b,c");		
+	assertEquals(string(ExceptionalIterators.<String,Problem>elements()),"");
+	assertEquals(string(ExceptionalIterators.<String,Problem>elements("a")),"a");
+	assertEquals(string(ExceptionalIterators.<String,Problem>elements("a","b","c")),"a,b,c");		
+	assertEquals(string(ExceptionalIterators.<String,Problem>factories()),"");
+	assertEquals(string(ExceptionalIterators.<String,Problem>factories(factory("a"))),"a");
+	assertEquals(string(ExceptionalIterators.<String,Problem>factories(factory("a"),factory(null),factory("c"))),"a,problem,c");
+    }
+    
 }

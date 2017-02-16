@@ -7,26 +7,30 @@ public class MetaExceptionalIterable<T,E extends Throwable> implements Exception
 	java.util.Iterator<ExceptionalIterable<T,E>> i;
 	ExceptionalIterator<T,E> j;
 	
-	MetaIterator() {
+	MetaIterator() throws E {
 	    i = iterables.iterator();
-	    j = ExceptionalIterators.<T,E>empty();
+	    j = null;
+	    while (j == null && i.hasNext()) {
+	    	j=i.next().iterator();
+		if (!j.hasNext()) j=null;
+	    }
 	}
 
 	@Override public boolean hasNext() throws E {
-	    while (!j.hasNext() && i.hasNext()) {
-		j=i.next().iterator();
-	    }
-	    return j.hasNext();
+	    return j != null;
 	}
+
 	@Override public T next() throws E {
+	    T ans = j.next();
 	    while (!j.hasNext() && i.hasNext()) {
 		j=i.next().iterator();
 	    }
-	    return j.next();
+	    if (!j.hasNext()) j=null;
+	    return ans;
 	}
     }
 
-    @Override public ExceptionalIterator<T,E> iterator() {
+    @Override public ExceptionalIterator<T,E> iterator() throws E {
 	return new MetaIterator();
     }
 
