@@ -36,4 +36,12 @@ public class InputStreamFactories {
     public static final CatInputStreamFactory create(ExceptionalFactory<InputStream,IOException>... factories) {
 	return new CatInputStreamFactory(ExceptionalIterables.<InputStream,IOException>factories(factories));
     }
+
+    public static byte[] bytes(InputStreamFactory factory) throws IOException {
+	return InputStreams.bytes(factory.create());
+    }
+
+    public static String string(InputStreamFactory factory) throws IOException {
+	return InputStreams.string(factory.create());
+    }
 }

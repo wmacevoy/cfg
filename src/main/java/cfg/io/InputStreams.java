@@ -39,4 +39,30 @@ public class InputStreams {
     public static final InputStream create(ExceptionalFactory<InputStream,IOException>... factories) {
 	return new CatInputStream(ExceptionalIterators.<InputStream,IOException>factories(factories));
     }
+
+    public static byte[] bytes(InputStream stream) throws IOException {
+	ArrayList<byte[]> parts = new ArrayList<byte[]>();
+	int length = 0;
+	for (;;) {
+	    byte[] bytes = new byte[1024];
+	    int n = stream.read(bytes);
+	    if (n <= 0) break;
+	    if (n < bytes.length) {
+		bytes = Arrays.copyOf(bytes,n);
+	    }
+	    parts.add(bytes);
+	    length += bytes.length;
+	}
+	byte[] all = new byte[length];
+	length = 0;
+	for (byte[] part : parts) {
+	    System.arraycopy(part,0,all,length,part.length);
+	    length += part.length;
+	}
+	return all;
+    }
+
+    static String string(InputStream stream) throws IOException {
+	return new String(bytes(stream),CHARSET_UTF8);
+    }
 }
