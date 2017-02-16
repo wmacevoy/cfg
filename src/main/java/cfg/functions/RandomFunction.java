@@ -1,7 +1,8 @@
-package cfg;
+package cfg.functions;
 
 import java.util.List;
 import java.util.HashMap;
+import cfg.Cfg;
 
 public class RandomFunction implements Function {
     RandomGenerators generators = new RandomGenerators();

@@ -1,4 +1,4 @@
-package cfg;
+package cfg.functions;
 
 public class RepeatGenerator implements Generator {
     Generator generator;

@@ -1,4 +1,4 @@
-package cfg;
+package cfg.functions;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;

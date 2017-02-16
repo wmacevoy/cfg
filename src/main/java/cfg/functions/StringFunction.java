@@ -1,6 +1,7 @@
-package cfg;
+package cfg.functions;
 
 import java.util.List;
+import cfg.Cfg;
 
 public class StringFunction implements Function {
     @Override public int args() { return 1; }

@@ -1,4 +1,4 @@
-package cfg;
+package cfg.functions;
 
 public class StringGenerator implements Generator { 
     String string; 
