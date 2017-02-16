@@ -38,23 +38,29 @@ public class MetaExceptionalIterable<T,E extends Throwable> implements Exception
 	iterables = _iterables;
     }
 
-    public void elements(T... elements) {
+    public MetaExceptionalIterable elements(T... elements) {
 	iterables.add(ExceptionalIterables.elements(elements));
+	return this;
     }
 
-    public void iterable(Iterable<T> iterable) {
+    public MetaExceptionalIterable iterable(Iterable<T> iterable) {
 	iterables.add(ExceptionalIterables.iterable(iterable));
+	return this;
     }
 
-    public void factories(ExceptionalFactory<T,E>... factories) {
-	iterables.add(ExceptionalIterables.factories(factories));
-    }
-
-    public void factories(Iterable<ExceptionalFactory<T,E>> factories) {
-	iterables.add(ExceptionalIterables.factories(factories));
-    }
-
-    public void iterable(ExceptionalIterable<T,E> iterable) {
+    public MetaExceptionalIterable  iterable(ExceptionalIterable<T,E> iterable) {
 	iterables.add(iterable);
+	return this;
     }
+
+    public MetaExceptionalIterable factories(ExceptionalFactory<T,E>... factories) {
+	iterables.add(ExceptionalIterables.factories(factories));
+	return this;
+    }
+
+    public MetaExceptionalIterable factories(Iterable<ExceptionalFactory<T,E>> factories) {
+	iterables.add(ExceptionalIterables.factories(factories));
+	return this;
+    }
+
 }
