@@ -11,7 +11,7 @@ public class OrGenerator implements Generator {
 	generators.add(generator);
     }
     @Override public String generate() {
-	return generators.get(PatternGenerator.random(0,generators.size()-1)).generate();
+	return generators.get(RandomGenerator.random(0,generators.size()-1)).generate();
     }	
 
     @Override public String toString() {

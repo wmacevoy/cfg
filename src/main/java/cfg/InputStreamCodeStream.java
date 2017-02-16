@@ -9,11 +9,11 @@ public class InputStreamCodeStream implements CodeStream {
 
     InputStreamCodeStream(InputStream _is) { is=_is; }
 
-    public synchronized int peek(int offset) throws IOException {
-	while (offset < peeks.size()) {
+    public synchronized int peek(int shift) throws IOException {
+	while (shift >= peeks.size()) {
 	    peeks.add(_read());
 	}
-	return peeks.get(offset);
+	return peeks.get(shift);
     }
 
     public synchronized int read() throws IOException {
@@ -55,7 +55,7 @@ public class InputStreamCodeStream implements CodeStream {
 		if ((ans & 0b11000000) != 0b10000000) break;
 	    }
 	    int extra = 0;
-	    while ((ans & 0b10000000)) {
+	    while ((ans & 0b10000000) != 0) {
 		++extra;
 		ans = (ans << 1);
 	    }

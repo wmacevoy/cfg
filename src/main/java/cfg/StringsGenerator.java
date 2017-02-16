@@ -11,7 +11,7 @@ class StringsGenerator implements Generator {
 	strings=_strings;
     }
     @Override public String generate() {
-	return strings.get(PatternGenerator.random(0,strings.size()-1));
+	return strings.get(RandomGenerator.random(0,strings.size()-1));
     }	
 
     @Override public String toString() {

@@ -1,7 +1,5 @@
 package cfg;
 
-import java.io.InputStream;
+import java.io.*;
 
-public interface InputStreamFactory {
-    InputStream stream();
-}
+public interface InputStreamFactory extends ExceptionalFactory<InputStream,IOException> { }

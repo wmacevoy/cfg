@@ -1,16 +1,9 @@
 package cfg;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.*;
+import java.util.*;
 
-public interface Resource extends InputStreamFactory {
-    static final InputStream NULL = new NullInputStream();
-
-    static final List<Resource> EMPTY 
-	= Collections.unmodifiableList(new ArrayList<Resource>());
-
+public interface Resource extends ExceptionalFactory<InputStream,IOException>, ExceptionalIterable<Resource,IOException> {
     String getName();
-    InputStream stream();
-    List<Resource> contents();
 }
+

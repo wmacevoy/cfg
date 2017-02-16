@@ -8,6 +8,6 @@ public class EnvFunction implements Function {
     @Override
         public String eval(Cfg cfg, String base, String id, List<String> args) {
         String arg = cfg.cook(base,args.get(0)).trim();
-        return System.getenv(arg);
+        return cfg.env(arg);
     }
 }

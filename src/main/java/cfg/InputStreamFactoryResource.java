@@ -1,26 +1,29 @@
 package cfg;
 
+import java.io.*;
+import java.util.*;
+
 public class InputStreamFactoryResource implements Resource {
     String name;
-    private InputStreamFactory inputStreamFactory;
-    public InputStreamResource(String _name,
-			       InputStreamFactory _inputStreamFactory) {
+    InputStreamFactory factory;
+
+    public InputStreamFactoryResource(String _name,
+			       InputStreamFactory _factory) {
 	name = _name;
-	inputStreamFactory=_inputStreamFactory;
+	factory=_factory;
     }
-    public InputStream stream() { return inputStreamFactory.create(); }
 
-    List<Resource> resources = null;
-    public List<Resource> contents() {
-	if (resources != null) {
-	    CodeStream codeStream = 
-		new InputStreamCodeStream(stream());
+    @Override public String getName() { return name; }
 
-	    CodeStreamResourceCompiler compiler = new 
-		CodeStreamResourceCompiler(codeStream);
-	    compiler.compile();
-	    resources=compiler.resources();
-	}
-	return resources;
+    @Override public InputStream create() throws IOException {
+        return factory.create();
+    }
+
+    @Override public ExceptionalIterator<Resource,IOException> iterator() throws IOException {
+	CodeStream codes = new InputStreamCodeStream(create());
+	CodeStreamResourceCompiler compiler = new CodeStreamResourceCompiler(codes);
+	compiler.compile();
+	return ExceptionalIterators.<Resource,IOException>iterator(compiler.resources.iterator());
     }
 }
+

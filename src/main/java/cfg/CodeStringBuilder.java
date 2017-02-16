@@ -1,5 +1,8 @@
 package cfg;
 
+import java.io.IOException;
+import java.util.*;
+
 class CodeStringBuilder {
     private int[] data;
     private int _length;
@@ -15,7 +18,7 @@ class CodeStringBuilder {
 
     public void append(int value) {
 	if (_length + 1 > data.length) {
-	    data = Array.copyOf(data,(_length+1)*5/4);
+	    data = Arrays.copyOf(data,(_length+1)*5/4);
 	}
 	data[_length]=value;
 	++_length;
@@ -23,13 +26,13 @@ class CodeStringBuilder {
 
     public void append(int[] source, int offset, int length) {
 	if (_length + length > data.length) {
-	    data = Array.copyOf(data,(_length+length)*5/4);
+	    data = Arrays.copyOf(data,(_length+length)*5/4);
 	}
 	System.arraycopy(source,offset,data,_length,length);
 	_length += length;
     }
 
-    void append(CodeStream stream) {
+    void append(CodeStream stream) throws IOException {
 	int [] buf = new int[1024];
 	for (;;) {
 	    int size = stream.read(buf);
@@ -43,7 +46,7 @@ class CodeStringBuilder {
 	int i = 0;
 	int j = 0;
 	while (i < cs.length()) {
-	    cp[j] = cs.codePointAt(i);
+	    cp[j] = java.lang.Character.codePointAt(cs,i);
 	    i += Character.charCount(cp[j]);
 	    ++j;
 	}
@@ -54,18 +57,19 @@ class CodeStringBuilder {
 	return new IntArrayCodeStream(data,offset,length);
     }
 
-    public CodeSream stream() {
+    public CodeStream stream() {
 	return stream(0,_length);
     }
 
-    @Override public String toString() {
-	StringBuilder sb = new StringBuilder();
-	for (int i=0; i<_length; ++i) {
-	    sb.appendCodePoint(data[i]);
+    public int get(int index) {
+	if (index >= 0 && index <= _length) {
+	    return data[index];
+	} else {
+	    throw new IndexOutOfBoundsException("" + index + " not in [0,"+_length+")");
 	}
-	return sb.toString();
     }
 
+    /*
     public StringBuilder toStringBuilder(StringBuilder sb, 
 					 int offset, int length) {
 	if (sb == null) {
@@ -80,6 +84,7 @@ class CodeStringBuilder {
     public StringBuilder toStringBuilder(StringBuilder sb) {
 	return toStringBuilder(sb,0,_length);
     }
+    */
 
     public String toString(int offset, int length) {
 	return new String(data,offset,length);

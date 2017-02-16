@@ -1,29 +1,34 @@
 package cfg;
 
+import java.io.*;
+import java.util.*;
+import java.nio.charset.Charset;
+
 class CodeStreamResourceCompiler {
+    CodeStream stream;
     public CodeStreamResourceCompiler(CodeStream _stream)  {    
 	stream=_stream;
     }
     ArrayList<Resource> resources = new ArrayList<Resource>();
 
-    ArrayList<CodeStringBuilder> save = null;
+    CodeStringBuilder save = null;
     int reads = 0;
 
-    int peek(int offset) { return stream.peek(offset); }
-    int peek() { return stream.peek(0); }
-    int read() { 
+    int peek(int offset) throws IOException { return stream.peek(offset); }
+    int peek() throws IOException { return stream.peek(0); }
+    int read() throws IOException { 
 	int code = stream.read();
 	if (save != null && code != -1) { ++reads; save.append(code); }
 	return code;
     }
 
-    boolean match(int code) {
+    boolean match(int code) throws IOException {
 	if (peek() == code) { read(); return true; }
 	return false;
     }
-    boolen match(String word) {
+    boolean match(String word) throws IOException  {
 	for (int i=0; i<word.length(); ++i) {
-	    if (!peek(i) == word.charAt(i)) return false;
+	    if (peek(i) != word.charAt(i)) return false;
 	}
 	for (int i=0; i<word.length(); ++i) {
 	    read();
@@ -31,9 +36,9 @@ class CodeStreamResourceCompiler {
 	return true;
     }
 
-    boolean eof() { return peek(0) == -1; }
+    boolean eof() throws IOException { return peek(0) == -1; }
 
-    boolean comment() {
+    boolean comment() throws IOException {
 	if (match("<!--")) {
 	    while (!eof() && !match("-->")) { read(); }
 	    return true;
@@ -42,7 +47,7 @@ class CodeStreamResourceCompiler {
 	}
     }
 	
-    boolean ws() {
+    boolean ws() throws IOException  {
 	if (Character.isWhitespace(peek())) {
 	    read();
 	    while (Character.isWhitespace(peek())) { read(); }
@@ -52,7 +57,7 @@ class CodeStreamResourceCompiler {
 	}
     }
 
-    boolean wsc() {
+    boolean wsc() throws IOException {
 	if (ws() || comment()) {
 	    while (ws() || comment()) { }
 	    return true;
@@ -61,7 +66,7 @@ class CodeStreamResourceCompiler {
 	}
     }
 
-    boolean name() {
+    boolean name() throws IOException {
 	boolean ans = false;
 	for (;;) {
 	    int code=peek();
@@ -75,7 +80,7 @@ class CodeStreamResourceCompiler {
 	return ans;
     }
 
-    boolean value() {
+    boolean value() throws IOException {
 	int code = peek();
 	if (code == '\'' || code == '\"') {
 	    read();
@@ -95,7 +100,7 @@ class CodeStreamResourceCompiler {
 	return false;
     }
 
-    boolean attribute() {
+    boolean attribute() throws IOException {
 	ws();
 	if (name()) {
 	    ws();
@@ -109,14 +114,15 @@ class CodeStreamResourceCompiler {
 	}
     }
 
-    CodeStringBuilder tag() {
+    CodeStringBuilder tag() throws IOException {
 	wsc();
 	if (!match('<')) return null;
 	ws();
 	CodeStringBuilder csb = new CodeStringBuilder();
+        if (match('/')) csb.append('/');
 	for (;;) {
 	    int code = peek();
-	    if (code != -1 && !Character.isWhitespace(code)) {
+	    if (code != -1 && !Character.isWhitespace(code) && code != '>' && code != '/') {
 		csb.append(code);
 		read();
 	    } else {
@@ -124,6 +130,7 @@ class CodeStreamResourceCompiler {
 	    }
 	}
 	while (attribute()) { }
+        ws();
 	if (match("/>")) { csb.append('/');  return csb; }
 	match(">");
 	return csb;
@@ -139,39 +146,37 @@ class CodeStreamResourceCompiler {
     }
 
     void close(String tag) {
-	for (int i=nest.length()-1; i>=0; --i) {
+	for (int i=nest.size()-1; i>=0; --i) {
 	    if (nest.get(i).equals(tag)) {
 		nest.resize(i);
 		if (i == 0) {
 		    int length = save.length()-reads;
-		    String value = new = save.toString(null,0,length);
-		    final byte[] data = Charset.forName("UTF-8").encode(value);
+		    String value = save.toString(0,length);
+		    final byte[] data = value.getBytes(Charset.forName("UTF-8"));
 		    ByteArrayInputStreamFactory factory =
 			new ByteArrayInputStreamFactory(data);
-		    resources.add(new InputStreamFactoryResource(tag,factory);
+		    resources.add(new InputStreamFactoryResource(tag,factory));
 		}
 	    }
 	}
     }
     
-    public void compile() {
+    public void compile() throws IOException {
 	for (;;) {
 	    int code;
 	    for (;;) {
-		int code = peek();
+		code = peek();
 		if (code == '<' || code == -1) break;
 		read();
 	    }
 	    if (code == '<') {
 		reads = 0;
-		CodeStringBuffer csb = tag();
+		CodeStringBuilder csb = tag();
 		if (csb.length() > 0 && csb.get(0) == '/') { 
-		    String name=csb.toStringBuilder(null,1,csb.length()-1)
-			.toString();
+		    String name=csb.toString(1,csb.length()-1);
 		    close(name);
 		} else if (csb.length() > 0 && csb.get(csb.length()-1) == '/') {
-		    String name=csb.toStringBuilder(null,0,csb.length()-1)
-			.toString();
+		    String name=csb.toString(0,csb.length()-1);
 		    open(name);
 		    close(name);
 		} else if (csb.length() > 0) {

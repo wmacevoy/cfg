@@ -9,14 +9,14 @@ public class IntArrayCodeStream implements CodeStream {
     private int length;
     private int at;
 
-    @Override public IntArrayCodeStream(int [] _data, int _offset, int _length) {
+    public IntArrayCodeStream(int [] _data, int _offset, int _length) {
 	data=_data;
 	offset=_offset;
 	length=_length;
 	at=0;
     }
 
-    @Override public IntArrayCodeStream(int [] _data) {
+    public IntArrayCodeStream(int [] _data) {
 	data=_data;
 	offset=0;
 	length=_data.length;

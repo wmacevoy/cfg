@@ -12,7 +12,7 @@ public class RepeatGenerator implements Generator {
     }
 
     @Override public String generate() {
-	int n=PatternGenerator.random(min,max);
+	int n=RandomGenerator.random(min,max);
 	StringBuilder sb = new StringBuilder();
 	for (int i=0; i<n; ++i) {
 	    sb.append(generator.generate());
