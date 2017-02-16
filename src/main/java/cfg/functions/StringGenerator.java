@@ -2,7 +2,7 @@ package cfg.functions;
 
 public class StringGenerator implements Generator { 
     String string; 
-    StringGenerator(String _string) { 
+    public StringGenerator(String _string) { 
 	string=_string;
     } 
     @Override public String generate() { return string; }

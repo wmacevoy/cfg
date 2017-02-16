@@ -3,7 +3,7 @@ package cfg.functions;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 
-class RandomGenerator  implements Generator {
+public class RandomGenerator  implements Generator {
     Generator generator;
     CharSequence source;
     int position;
@@ -30,7 +30,7 @@ class RandomGenerator  implements Generator {
 
     static final Generator NULL = new StringGenerator("");
 
-    RandomGenerator(CharSequence _source) {
+    public RandomGenerator(CharSequence _source) {
 	source=_source;
 	position = 0;
 	generator = or();

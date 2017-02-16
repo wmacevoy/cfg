@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.*;
 import java.lang.reflect.*;
+import cfg.functions.*;
 
 public class GeneratorTest
 {
@@ -63,14 +64,14 @@ public class GeneratorTest
 	}
     }
     
-    @Test public void testPatternStringGenerator() {
-	PatternGenerator g = new PatternGenerator("alice");
+    @Test public void testRandomStringGenerator() {
+	RandomGenerator g = new RandomGenerator("alice");
 	assertEquals(g.toString(),"alice->'alice'");
 	assertEquals(g.generate(),"alice");
     }
 
-    @Test public void testPatternSetGenerator() {
-	PatternGenerator g = new PatternGenerator("[a-c]");
+    @Test public void testRandomSetGenerator() {
+	RandomGenerator g = new RandomGenerator("[a-c]");
 	assertEquals(g.toString(),"[a-c]->('a','b','c')");
 	for (int i=0; i<10; ++i) {
 	    String ans = g.generate();
@@ -82,8 +83,8 @@ public class GeneratorTest
 	}
     }
 
-    @Test public void testPatternRepeatGenerator() {
-	Generator g = new PatternGenerator("x{3,5}");
+    @Test public void testRandomRepeatGenerator() {
+	Generator g = new RandomGenerator("x{3,5}");
 	System.out.println("repeat: " + g.toString());
 	assertEquals(g.toString(),"x{3,5}->'x'{3,5}");
 	for (int i=0; i<10; ++i) {

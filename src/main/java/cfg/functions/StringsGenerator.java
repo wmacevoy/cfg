@@ -2,12 +2,12 @@ package cfg.functions;
 
 import java.util.ArrayList;
 
-class StringsGenerator implements Generator { 
+public class StringsGenerator implements Generator { 
     ArrayList<String> strings;
     void add(String string) {
 	strings.add(string);
     }
-    StringsGenerator(ArrayList<String> _strings) {
+    public StringsGenerator(ArrayList<String> _strings) {
 	strings=_strings;
     }
     @Override public String generate() {

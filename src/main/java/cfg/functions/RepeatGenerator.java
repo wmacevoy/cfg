@@ -5,7 +5,7 @@ public class RepeatGenerator implements Generator {
     int min;
     int max;
 
-    RepeatGenerator(Generator _generator, int _min, int _max) {
+    public RepeatGenerator(Generator _generator, int _min, int _max) {
 	generator=_generator;
 	min=_min;
 	max=_max;

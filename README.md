@@ -49,11 +49,9 @@ java -cp target/cfg-1.0.jar cfg.Cfg '$encrypt{$env{CFG_KEY},db-password}'
 ## Step 5: Store your encrypted configuration in the resources for your project (src/main/resources/cfg/db.cfg, etc)
 
 ```
-<db>
-  <user>db-user</user>
-  <password>$decrypt{$env{CFG_KEY},${cipher}}</password>
-  <cipher>2f3da2aa34e978b768f8efb63f36600df5f78f71756f3feb5f7262ab99d008460409f0bef3ac473471964b3e</cipher>
-</db>
+<user>db-user</user>
+<password>$decrypt{$env{CFG_KEY},${cipher}}</password>
+<cipher>2f3da2aa34e978b768f8efb63f36600df5f78f71756f3feb5f7262ab99d008460409f0bef3ac473471964b3e</cipher>
 ```
 
 ## Step 6 -- load/use configuration.

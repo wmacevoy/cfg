@@ -1,5 +1,10 @@
 package cfg;
 
+import cfg.functions.Function;
+import cfg.io.InputStreams;
+import cfg.io.InputStreamFactory;
+import cfg.io.InputStreamFactories;
+
 import java.util.Arrays;
 import java.io.File;
 import java.io.ByteArrayInputStream;
@@ -31,7 +36,7 @@ import java.util.regex.Pattern;
 
 public class Cfg 
 {
-    private Env env = new Env();
+    private cfg.functions.Env env = new cfg.functions.Env();
     public String env(String name) { 
 	return env.get(name); 
     }
@@ -39,22 +44,22 @@ public class Cfg
 	env.set(name,value); 
     }
     public static String ENV(String name) { 
-	return Env.getenv(name); 
+	return cfg.functions.Env.getenv(name); 
     }
     public static void ENV(String name, String value) { 
-	Env.setenv(name,value); 
+	cfg.functions.Env.setenv(name,value); 
     }
 
     HashMap<String,Function> functions = new HashMap<String,Function>() {{
-            put("",new StringFunction());
-            put("raw",new RawStringFunction());
-            put("env",new EnvFunction());
-            put("encrypt",new EncryptFunction());
-            put("decrypt",new DecryptFunction());
-            put("random",new RandomFunction());
+            put("",new cfg.functions.StringFunction());
+            put("raw",new cfg.functions.RawStringFunction());
+            put("env",new cfg.functions.EnvFunction());
+            put("encrypt",new cfg.functions.EncryptFunction());
+            put("decrypt",new cfg.functions.DecryptFunction());
+            put("random",new cfg.functions.RandomFunction());
         }};
 
-    Function defaultFunction = new DefaultFunction();
+    Function defaultFunction = new cfg.functions.DefaultFunction();
 
     String root;
     
