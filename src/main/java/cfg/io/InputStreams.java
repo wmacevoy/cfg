@@ -36,6 +36,7 @@ public class InputStreams {
 	return create(new String(codepoints,0,codepoints.length));	
     }
 
+    @SafeVarargs
     public static final InputStream create(ExceptionalFactory<InputStream,IOException>... factories) {
 	return new CatInputStream(ExceptionalIterators.<InputStream,IOException>factories(factories));
     }

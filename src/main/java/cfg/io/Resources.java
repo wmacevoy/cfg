@@ -25,6 +25,10 @@ public class Resources {
 	return new FileResource(file);
     }
 
+    public static Resource cd(Resource resource, Collection<String> parts) throws IOException {
+	return cd(resource,(String[])parts.toArray());
+    }
+
     public static Resource cd(Resource resource, String... parts) throws IOException {
 	Path path = new Path(parts);
 	path.normalize();

@@ -14,49 +14,10 @@ import cfg.io.*;
 
 public class CfgTest
 {
-    static void setenv(String name, String value) {
-       HashMap<String,String> map = new HashMap<String,String>();
-        map.put(name,value);
-        setenv(map);
-    }
-
-    // http://stackoverflow.com/questions/318239/how-do-i-set-environment-variables-from-java
-
-    static void setenv(Map<String, String> newenv)
-    {
-  try
-      {
-          Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
-          Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
-          theEnvironmentField.setAccessible(true);
-          Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
-          env.putAll(newenv);
-          Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
-          theCaseInsensitiveEnvironmentField.setAccessible(true);
-          Map<String, String> cienv = (Map<String, String>)     theCaseInsensitiveEnvironmentField.get(null);
-          cienv.putAll(newenv);
-      }
-  catch (NoSuchFieldException e)
-      {
-          try {
-              Class[] classes = Collections.class.getDeclaredClasses();
-              Map<String, String> env = System.getenv();
-              for(Class cl : classes) {
-                  if("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
-                      Field field = cl.getDeclaredField("m");
-                      field.setAccessible(true);
-                      Object obj = field.get(env);
-                      Map<String, String> map = (Map<String, String>) obj;
-                      map.clear();
-                      map.putAll(newenv);
-                  }
-              }
-          } catch (Exception e2) {
-              e2.printStackTrace();
-          }
-      } catch (Exception e1) {
-      e1.printStackTrace();
-  } 
+    static void setenv(String name, String value) { Cfg.ENV(name,value); }
+    static String getenv(String name) {
+	assertEquals(System.getenv(name),Cfg.ENV(name));
+	return Cfg.ENV(name);
     }
 
     @Test
@@ -66,7 +27,7 @@ public class CfgTest
     }
 
     @Test
-	public void testRealFilePath() {
+    public void testRealFilePath() {
         Cfg cfg = new Cfg("file:/home/user/.project/private");
 	assertEquals(cfg.realPath("../public/value"),
 		     "file:/home/user/.project/public/value");
@@ -136,7 +97,7 @@ public class CfgTest
     @Test public void testLoadFile() throws Exception {
 	String prefix = "testLoadFile";
 	String suffix = ".cfg";
-	String value  = new RandomGenerator("[A-Za-z0-9]{32}").generate();    
+	String value  = new RandomGenerator("[A-Za-z0-9]{32}").generate();
 	File file = File.createTempFile(prefix, suffix);
 	file.deleteOnExit();
 

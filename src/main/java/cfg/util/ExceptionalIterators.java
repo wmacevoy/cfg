@@ -21,6 +21,7 @@ public class ExceptionalIterators {
 	};
     }
 
+    @SafeVarargs
     public static <T,E extends Throwable> ExceptionalIterator<T,E> elements(final T... elements) {
 	return new ExceptionalIterator<T,E>() {
 	    int k=0;
@@ -46,6 +47,8 @@ public class ExceptionalIterators {
 	};
     }
 
+
+    @SafeVarargs
     public static <T,E extends Throwable> ExceptionalIterator<T,E> factories(final ExceptionalFactory<T,E>... factories) {
 	return new ExceptionalIterator<T,E>() {
 	    int k = 0;

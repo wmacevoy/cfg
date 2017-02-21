@@ -20,6 +20,7 @@ public class ExceptionalIterables {
 	};
     }
 
+    @SafeVarargs
     public static <T,E extends Throwable> ExceptionalIterable<T,E> elements(final T... elements) {
 	return new ExceptionalIterable<T,E> () {
 	    @Override public ExceptionalIterator<T,E> iterator() {
@@ -36,6 +37,7 @@ public class ExceptionalIterables {
 	};
     }
 
+    @SafeVarargs
     public static <T,E extends Throwable> ExceptionalIterable<T,E> factories(final ExceptionalFactory<T,E>... factories) {
 	return new ExceptionalIterable<T,E> () {
 	    @Override public ExceptionalIterator<T,E> iterator() {

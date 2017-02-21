@@ -33,6 +33,7 @@ public class InputStreamFactories {
 	return create(codepoints,0,codepoints.length);
     }
 
+    @SafeVarargs
     public static final CatInputStreamFactory create(ExceptionalFactory<InputStream,IOException>... factories) {
 	return new CatInputStreamFactory(ExceptionalIterables.<InputStream,IOException>factories(factories));
     }

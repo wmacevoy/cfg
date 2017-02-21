@@ -1,8 +1,9 @@
 package cfg.io;
 
 import java.util.*;
+import cfg.util.*;
 
-public class Path extends ArrayList<String> implements Comparable<Path> {
+public class Path extends ResizableArrayList<String> implements Comparable<Path> {
     public Path(int initialCapacity) {
 	super(initialCapacity);
     }
@@ -30,9 +31,7 @@ public class Path extends ArrayList<String> implements Comparable<Path> {
 	    int diff = get(i).compareTo(to.get(i));
 	    if (diff != 0) return diff;
 	}
-	if (size() > to.size()) return -1;
-	if (to.size() > size()) return  1;
-	return 0;
+	return size()-to.size();
     }
 
     @Override public boolean equals(Object to) {

@@ -42,13 +42,14 @@ public class MetaExceptionalIterable<T,E extends Throwable> implements Exception
 	iterables = _iterables;
     }
 
-    public MetaExceptionalIterable elements(T... elements) {
-	iterables.add(ExceptionalIterables.elements(elements));
+    @SafeVarargs
+    public final MetaExceptionalIterable elements(T... elements) {
+	iterables.add(ExceptionalIterables.<T,E>elements(elements));
 	return this;
     }
 
     public MetaExceptionalIterable iterable(Iterable<T> iterable) {
-	iterables.add(ExceptionalIterables.iterable(iterable));
+	iterables.add(ExceptionalIterables.<T,E>iterable(iterable));
 	return this;
     }
 
@@ -57,7 +58,8 @@ public class MetaExceptionalIterable<T,E extends Throwable> implements Exception
 	return this;
     }
 
-    public MetaExceptionalIterable factories(ExceptionalFactory<T,E>... factories) {
+    @SafeVarargs
+    public final MetaExceptionalIterable factories(ExceptionalFactory<T,E>... factories) {
 	iterables.add(ExceptionalIterables.factories(factories));
 	return this;
     }
@@ -66,5 +68,4 @@ public class MetaExceptionalIterable<T,E extends Throwable> implements Exception
 	iterables.add(ExceptionalIterables.factories(factories));
 	return this;
     }
-
 }
