@@ -11,7 +11,7 @@ public class ResourcesResource extends ResourcesInputStreamFactory implements Re
 	return iterable.iterator();
     }
 
-    private ResourcesResource(String _name, ExceptionalIterable<Resource,IOException> _iterable) {
+    public ResourcesResource(String _name, ExceptionalIterable<Resource,IOException> _iterable) {
 	super(_iterable);
 	name=_name;
     }

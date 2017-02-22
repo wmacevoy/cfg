@@ -89,4 +89,17 @@ public class Path extends ResizableArrayList<String> implements Comparable<Path>
     @Override public Path clone() {
 	return new Path(this);
     }
+
+    public boolean endsWith(String... endings) {
+	if (size() == 0) return false;
+	String tail = get(size()-1);
+	for (String ending : endings) {
+	    if (tail.endsWith(ending)) { return true; }
+	}
+	return false;
+    }
+
+    public String tail() {
+	return (size() > 0) ? get(size()-1) : null;
+    }
 }
