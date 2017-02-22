@@ -28,10 +28,21 @@ public class Path extends ResizableArrayList<String> implements Comparable<Path>
     @Override public int compareTo(Path to) {
 	int n = Math.min(size(),to.size());
 	for (int i=0; i<n; ++i) {
-	    int diff = get(i).compareTo(to.get(i));
-	    if (diff != 0) return diff;
+	    String a = get(i);
+	    String b = to.get(i);
+	    if (a != null && b != null) {
+		int diff = a.compareTo(b);
+		if (diff != 0) return diff;
+	    } else if (a == null && b != null) {
+		return to.size() == i+1 ? 1 :  -1;
+	    } else if (a != null && b == null) {
+		return size() == i+1 ?  -1 : 1;
+	    }
 	}
-	return size()-to.size();
+	int delta = size()-to.size();
+	if (delta < 0) return -1;
+	if (delta > 0) return  1;
+	return 0;
     }
 
     @Override public boolean equals(Object to) {
@@ -73,5 +84,9 @@ public class Path extends ResizableArrayList<String> implements Comparable<Path>
     }
     @Override public String toString() {
 	return toString(0,size());
+    }
+
+    @Override public Path clone() {
+	return new Path(this);
     }
 }
