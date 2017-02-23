@@ -70,4 +70,42 @@ public class CipherTest
         }
 
     }
+
+    @Test public void testRngAlgorithm() {
+	int[] values =
+	    new int[] {Integer.MIN_VALUE,-1000,-128,-4,-2,-1,0
+		       ,1,2,4,128,1000,Integer.MAX_VALUE};
+
+	for (int imin=0; imin<values.length; ++imin) {
+	    for (int imax=0; imax<values.length; ++imax) {
+		int min=values[imin];
+		int max=values[imax];
+
+		if (max < min) continue;
+
+		long D = ((long) max - (long) min + 1L);
+		long B = Long.MIN_VALUE - (Long.MIN_VALUE % D) - 1;
+
+		assertEquals((B+1) % D,0);
+		assertTrue(Long.MAX_VALUE-B<D);
+	    }
+	}
+    }
+
+    @Test public void testKey() {
+	String symbols = "ABDEGHJLNQR34679";
+	String group = "[" + symbols + "]{4,4}";
+	String rx = group + "-" + group;
+
+	String key = Cipher.key(32);
+	System.out.println("key: " + key);
+	
+	assertTrue(key.matches(rx));
+	for (int i=0; i<10; ++i) {
+	    String altKey = Cipher.key(32);
+	    System.out.println("alt key: " + altKey);
+	    assertTrue(altKey.matches(rx));
+	    assertNotEquals(key,altKey);
+	}
+    }
 }

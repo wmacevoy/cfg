@@ -12,17 +12,10 @@ public class Cipher {
     static char [] codes = new char [] { 
         '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' 
     };
-    private static SecureRandom rng = null;
-    private static void rand(byte[] buf, int offset, int length) {
 
-	if (rng == null) {
-	    synchronized(Cipher.class) {
-		if (rng == null) {
-		    rng=new SecureRandom();
-		}
-	    }
-	}
+    static SecureRandom rng = new SecureRandom();
 
+    private static void random(byte[] buf, int offset, int length) {
 	byte[] _buf = 
 	    (offset == 0 && length == buf.length) ? buf : new byte[length];
 
@@ -33,6 +26,7 @@ public class Cipher {
 	    Arrays.fill(_buf,(byte) 0);
 	}
     }
+
     public static void hex(StringBuilder sb, byte[] bin, int offset, int length) {
         for (int i=0; i<length; ++i) {
             byte b=bin[i+offset];
@@ -111,7 +105,7 @@ public class Cipher {
         int enclen = GCM_NONCE_LEN + plain.length + padlen + GCM_TAG_LEN;
 	byte [] enc = new byte[enclen];
 	if (nonce == null) {
-	    rand(enc,0,GCM_NONCE_LEN);
+	    random(enc,0,GCM_NONCE_LEN);
 	} else {
 	    System.arraycopy(nonce,0,enc,0,GCM_NONCE_LEN);
 	}
@@ -194,4 +188,25 @@ public class Cipher {
         return asString(decrypt(asBytes(key),bin(enc)));
     }
 
+    public static final String key(double bits,String symbols,
+				   int group, char sep) {
+
+	StringBuilder ans = new StringBuilder();
+
+	double bitsPerSymbol = Math.log(symbols.length())/Math.log(2.0);
+
+	int length  =(int) Math.ceil(bits/bitsPerSymbol-1e-9);
+
+	for (int i=0; i<length; ++i) {
+	    if (i>0 && group > 0 && i%group == 0) ans.append(sep);
+	    ans.append(symbols.charAt(rng.nextInt(symbols.length())));
+	}
+
+	return ans.toString();
+    }
+
+    public static final String key(double bits) {
+	String symbols = "ABDEGHJLNQR34679";	
+	return key(bits,symbols,4,'-');
+    }
 }
