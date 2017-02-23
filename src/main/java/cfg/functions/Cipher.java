@@ -86,22 +86,20 @@ public class Cipher {
     public static final int GCM_NONCE_LEN = 12;
     public static final int GCM_TAG_LEN = 16;
     public static final int PKCS5_LEN = 16;
-    public static final int KDF_COUNT = 1;
 
     private static final SecretKeySpec getKey(byte[] nonce, byte[] key) throws Exception {
 	if (key.length == AES_KEY_LEN) {
 	    return new SecretKeySpec(key,"AES");
 	}
-	byte[] _key = new byte[AES_KEY_LEN];
-	System.arraycopy(nonce,0,_key,0,GCM_NONCE_LEN);
-	System.arraycopy(nonce,0,_key,GCM_NONCE_LEN,
-			 AES_KEY_LEN-GCM_NONCE_LEN);
 
-	for (int i=0; i<KDF_COUNT; ++i) {
-	    byte[] tmp = encrypt(nonce,_key,key);
-	    System.arraycopy(tmp,tmp.length-AES_KEY_LEN,_key,0,AES_KEY_LEN);
-	    Arrays.fill(tmp,(byte) 0);
-	}
+	byte[] _key = new byte[AES_KEY_LEN];
+
+	System.arraycopy(nonce,0,_key,0,GCM_NONCE_LEN);
+	System.arraycopy(nonce,0,_key,GCM_NONCE_LEN,AES_KEY_LEN-GCM_NONCE_LEN);
+
+	byte[] tmp = encrypt(nonce,_key,key);
+	System.arraycopy(tmp,tmp.length-AES_KEY_LEN,_key,0,AES_KEY_LEN);
+	Arrays.fill(tmp,(byte) 0);
 	     
 	SecretKeySpec ans = new SecretKeySpec(_key,"AES");
 	Arrays.fill(_key,(byte) 0);
