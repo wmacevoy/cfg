@@ -4,6 +4,7 @@ import java.security.SecureRandom;
 import java.security.MessageDigest;
 import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.AEADBadTagException;
 import java.util.Arrays;
 import java.nio.charset.Charset;
 
@@ -80,38 +81,47 @@ public class Cipher {
         return ans;
     }
 
-    public static final byte[] sha256(byte[] data) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(data);
-            return md.digest();
-        } catch (Exception e) {
-            throw new Error("sha-256 digest failed: " + e);
-        }
-    }
-
-    public static final String sha256(String data) {
-        return hex(sha256(asBytes(data)));
-    }
-
     // AES-GCM parameters
     public static final int AES_KEY_LEN = 16;
     public static final int GCM_NONCE_LEN = 12;
     public static final int GCM_TAG_LEN = 16;
     public static final int PKCS5_LEN = 16;
+    public static final int KDF_COUNT = 1;
 
-    public static final byte[] encrypt(byte[] key, byte[] plain) {
+    private static final SecretKeySpec getKey(byte[] nonce, byte[] key) throws Exception {
+	if (key.length == AES_KEY_LEN) {
+	    return new SecretKeySpec(key,"AES");
+	}
+	byte[] _key = new byte[AES_KEY_LEN];
+	System.arraycopy(nonce,0,_key,0,GCM_NONCE_LEN);
+	System.arraycopy(nonce,0,_key,GCM_NONCE_LEN,
+			 AES_KEY_LEN-GCM_NONCE_LEN);
+
+	for (int i=0; i<KDF_COUNT; ++i) {
+	    byte[] tmp = encrypt(nonce,_key,key);
+	    System.arraycopy(tmp,tmp.length-AES_KEY_LEN,_key,0,AES_KEY_LEN);
+	    Arrays.fill(tmp,(byte) 0);
+	}
+	     
+	SecretKeySpec ans = new SecretKeySpec(_key,"AES");
+	Arrays.fill(_key,(byte) 0);
+	return ans;
+    }
+    
+    private static final byte[] encrypt(byte[] nonce, byte[] key, byte[] plain) {
         byte padlen = (byte)(PKCS5_LEN-(plain.length%PKCS5_LEN));
         int enclen = GCM_NONCE_LEN + plain.length + padlen + GCM_TAG_LEN;
-        byte[] enc = new byte[enclen];
+	byte [] enc = new byte[enclen];
+	if (nonce == null) {
+	    rand(enc,0,GCM_NONCE_LEN);
+	} else {
+	    System.arraycopy(nonce,0,enc,0,GCM_NONCE_LEN);
+	}
 
         try {
-            SecretKeySpec aesKey = 
-                new SecretKeySpec(Arrays.copyOf(sha256(key),AES_KEY_LEN),
-                                  "AES");
+	    SecretKeySpec aesKey=getKey(enc,key);
 
             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/GCM/NoPadding");
-            rand(enc,0,GCM_NONCE_LEN);
             GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LEN*8, enc, 0, GCM_NONCE_LEN);
             cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, aesKey, spec);
             int n = cipher.update(plain,0,plain.length,enc,GCM_NONCE_LEN);
@@ -126,8 +136,12 @@ public class Cipher {
         }
     }
 
+    public static final byte[] encrypt(byte[] key, byte[] plain) {
+	return encrypt(null,key,plain);
+    }
+
     public static final String encrypt(String key, String plain) {
-        return hex(encrypt(asBytes(key),asBytes(plain)));
+        return hex(encrypt(null,asBytes(key),asBytes(plain)));
     }
 
     public static final byte[] decrypt(byte[] key, byte[] enc) {
@@ -135,24 +149,29 @@ public class Cipher {
             enc.length < GCM_NONCE_LEN + PKCS5_LEN + GCM_TAG_LEN) {
             return null;
         }
+	int plainPadLen = enc.length - (GCM_NONCE_LEN + GCM_TAG_LEN);
+	byte[] plainPad = new byte[plainPadLen];
+	byte [] plain = null;
+	
         try {
-            int plainPadLen = enc.length - (GCM_NONCE_LEN + GCM_TAG_LEN);
-            byte[] plainPad = new byte[plainPadLen];
-            SecretKeySpec aesKey = 
-                new SecretKeySpec(Arrays.copyOf(sha256(key),AES_KEY_LEN),
-                                  "AES");
-
+	    SecretKeySpec aesKey=getKey(enc,key);	    
             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/GCM/NoPadding");        
-            byte[] nonce = Arrays.copyOf(enc,GCM_NONCE_LEN);
-            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LEN*8, nonce);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LEN*8, enc, 0, GCM_NONCE_LEN);
             cipher.init(javax.crypto.Cipher.DECRYPT_MODE, aesKey, spec);
-            cipher.doFinal(enc,nonce.length,
-                           enc.length-nonce.length,plainPad,0);
+            cipher.doFinal(enc,GCM_NONCE_LEN,
+                           enc.length-GCM_NONCE_LEN,plainPad,0);
             byte padlen = plainPad[plainPad.length-1];
-            return Arrays.copyOf(plainPad,plainPad.length-padlen);
-        } catch (Exception e) {
-            return null;
+	    plain = Arrays.copyOf(plainPad,plainPad.length-padlen);
+	} catch (AEADBadTagException e) {
+            plain = null;
+	} catch (Exception e) {
+	    throw new Error("decrypt failed: " + e);
+	} finally {
+	    if (plain != plainPad) {
+		Arrays.fill(plainPad,(byte) 0);
+	    }
         }
+	return plain;
     }
 
     public static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
