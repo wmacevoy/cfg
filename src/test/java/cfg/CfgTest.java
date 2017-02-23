@@ -49,12 +49,11 @@ public class CfgTest
     @Test
     public void testDecrypt() {
         Cfg cfg = new Cfg("/cfg/self-test/misc/db");
-        String key = "secret";
-        String pass = "867-5209";
+        String key = "AJA9-D7ED-69DN-Q7HH-B6A9-D37E-QNRR-HGA4";
+        String pass = "my-db-password";
         setenv("KEY",key);
-        System.out.println("encpass: " + Cipher.encrypt(key,pass));
         assertEquals(cfg.getString("user"),"dbadmin");
-        assertEquals(cfg.getString("pass"),"867-5209");
+        assertEquals(cfg.getString("pass"),pass);
     }
 
     @Test

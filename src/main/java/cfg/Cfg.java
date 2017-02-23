@@ -50,13 +50,14 @@ public class Cfg
 	cfg.functions.Env.setenv(name,value); 
     }
 
-    HashMap<String,Function> functions = new HashMap<String,Function>() {{
+    public HashMap<String,Function> functions = new HashMap<String,Function>() {{
             put("",new cfg.functions.StringFunction());
             put("raw",new cfg.functions.RawStringFunction());
             put("env",new cfg.functions.EnvFunction());
             put("encrypt",new cfg.functions.EncryptFunction());
             put("decrypt",new cfg.functions.DecryptFunction());
             put("random",new cfg.functions.RandomFunction());
+            put("key",new cfg.functions.KeyFunction());	    
         }};
 
     Function defaultFunction = new cfg.functions.DefaultFunction();
