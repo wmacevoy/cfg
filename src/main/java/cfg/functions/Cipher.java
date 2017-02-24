@@ -7,6 +7,10 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.AEADBadTagException;
 import java.util.Arrays;
 import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.NoSuchPaddingException;
+
 
 public class Cipher {
     static char [] codes = new char [] { 
@@ -81,7 +85,7 @@ public class Cipher {
     public static final int GCM_TAG_LEN = 16;
     public static final int PKCS5_LEN = 16;
 
-    private static final SecretKeySpec getKey(byte[] nonce, byte[] key) throws Exception {
+    private static final SecretKeySpec getKey(byte[] nonce, byte[] key) {
 	if (key.length == AES_KEY_LEN) {
 	    return new SecretKeySpec(key,"AES");
 	}
@@ -110,9 +114,8 @@ public class Cipher {
 	    System.arraycopy(nonce,0,enc,0,GCM_NONCE_LEN);
 	}
 
-        try {
-	    SecretKeySpec aesKey=getKey(enc,key);
-
+	SecretKeySpec aesKey=getKey(enc,key);
+	try {
             javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/GCM/NoPadding");
             GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LEN*8, enc, 0, GCM_NONCE_LEN);
             cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, aesKey, spec);
@@ -123,7 +126,7 @@ public class Cipher {
             }
             cipher.doFinal(pad,0,padlen,enc,n+GCM_NONCE_LEN);
             return enc;
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException|NoSuchPaddingExceptionException|InvalidKeyException|IllegalStateException e) {
             throw new Error("encrypt failed: " + e);
         }
     }
@@ -156,7 +159,7 @@ public class Cipher {
 	    plain = Arrays.copyOf(plainPad,plainPad.length-padlen);
 	} catch (AEADBadTagException e) {
             plain = null;
-	} catch (Exception e) {
+        } catch (NoSuchAlgorithmException|NoSuchPaddingExceptionException|InvalidKeyException|IllegalStateException e) {
 	    throw new Error("decrypt failed: " + e);
 	} finally {
 	    if (plain != plainPad) {
