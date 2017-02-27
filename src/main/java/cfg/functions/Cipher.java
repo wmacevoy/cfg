@@ -10,7 +10,11 @@ import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.NoSuchPaddingException;
-
+import javax.crypto.ShortBufferException;
+import java.security.InvalidParameterException;
+import javax.crypto.IllegalBlockSizeException;
+import java.security.InvalidAlgorithmParameterException;
+import javax.crypto.BadPaddingException;
 
 public class Cipher {
     static char [] codes = new char [] { 
@@ -126,7 +130,7 @@ public class Cipher {
             }
             cipher.doFinal(pad,0,padlen,enc,n+GCM_NONCE_LEN);
             return enc;
-        } catch (NoSuchAlgorithmException|NoSuchPaddingExceptionException|InvalidKeyException|IllegalStateException e) {
+        } catch (NoSuchAlgorithmException|ShortBufferException|NoSuchPaddingException|InvalidKeyException|IllegalStateException|InvalidAlgorithmParameterException|IllegalBlockSizeException|BadPaddingException e) {
             throw new Error("encrypt failed: " + e);
         }
     }
@@ -159,7 +163,7 @@ public class Cipher {
 	    plain = Arrays.copyOf(plainPad,plainPad.length-padlen);
 	} catch (AEADBadTagException e) {
             plain = null;
-        } catch (NoSuchAlgorithmException|NoSuchPaddingExceptionException|InvalidKeyException|IllegalStateException e) {
+        } catch (NoSuchAlgorithmException|ShortBufferException|NoSuchPaddingException|InvalidKeyException|IllegalStateException|InvalidAlgorithmParameterException|IllegalBlockSizeException|BadPaddingException e) {
 	    throw new Error("decrypt failed: " + e);
 	} finally {
 	    if (plain != plainPad) {
