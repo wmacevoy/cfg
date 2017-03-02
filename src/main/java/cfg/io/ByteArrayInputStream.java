@@ -17,17 +17,17 @@ public class ByteArrayInputStream extends InputStream {
     public ByteArrayInputStream(byte[] _buffer, int _offset, int _length) {
 	buffer=_buffer;
 	offset=_offset;
-	end = _offset + _length;
-	mark = _offset;
-	at = _offset;
+	end=_offset+_length;
+	mark=_offset;
+	at=_offset;
     }
 
     public ByteArrayInputStream(byte[] _buffer) {
 	buffer=_buffer;
 	offset=0;
-	end = _buffer.length;
-	mark = 0;
-	at = offset;
+	end=_buffer.length;
+	mark=0;
+	at=offset;
     }
 
     @Override public int available() {
@@ -35,31 +35,36 @@ public class ByteArrayInputStream extends InputStream {
     }
 
     @Override public void close() {
-	buffer = null;
-	offset = 0;
-	end = 0;
-	at = 0;
-	mark = 0;
+	buffer=null;
+	offset=0;
+	end=0;
+	at=0;
+	mark=0;
     }
 
     @Override public int read(byte[] dest, int destOffset, int length) throws IOException {
 	if (length <= 0) { return 0; }
-	int srcOffset;
+	int start;
 
 	synchronized(this) {
-	    srcOffset=at;
+	    start=at;
 	    length = Math.min(at+length,end)-at;
 	    at += length;
 	}
+
 	if (length > 0 && dest != null) {
-	    System.arraycopy(buffer,srcOffset,dest,destOffset,length);
+	    System.arraycopy(buffer,start,dest,destOffset,length);
 	}
-	return (length > 0) ? length : -1;
+	return length > 0 ? length : -1;
     }
 
     @Override public long skip(long n) throws IOException {
-	int length = (n < Integer.MAX_VALUE) ? (int) n : Integer.MAX_VALUE;
-	return (long) read(null,0,length);
+	if (n <= 0) return 0;
+	synchronized(this) {
+	    n = Math.min(at+n,end)-at;
+	    at += (int) n;
+	}
+	return n > 0 ? n : -1;
     }
 
     @Override public int read() throws IOException {

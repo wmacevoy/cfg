@@ -24,9 +24,9 @@ qq :
 target/cfg.jar : $(MAIN_SRC) $(TEST_SRC) $(MAIN_CFG) $(TEST_CFG)
 	/bin/rm -rf target/classes/*
 	if [ ! -d target/classes ] ; then mkdir -p target/classes ; fi
-	javac -target 1.7 -source 1.7 -Xlint:unchecked -cp target/classes -d target/classes -s src/main/java $(MAIN_SRC)
+	javac -target 1.7 -source 1.7 -cp target/classes -d target/classes -s src/main/java $(MAIN_SRC)
 	if [ "$(MAIN_RES)" != "" ] ; then tar -C src/main/resources -cf - $(MAIN_RES) | tar -C target/classes -xvf - ; fi
-	javac -nowarn -target 1.7 -source 1.7 -Xlint:unchecked -cp $(JUNIT):target/classes -d target/classes -s src/test/java $(TEST_SRC)
+	javac -nowarn -target 1.7 -source 1.7 -cp $(JUNIT):target/classes -d target/classes -s src/test/java $(TEST_SRC)
 	if [ "$(TEST_RES)" != "" ] ; then tar -C src/test/resources -cf - $(TEST_RES) | tar -C target/classes -xvf - ; fi
 	cd target/classes; jar cvf ../cfg.jar .
 

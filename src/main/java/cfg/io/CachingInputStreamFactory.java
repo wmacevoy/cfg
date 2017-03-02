@@ -47,7 +47,21 @@ public class CachingInputStreamFactory implements InputStreamFactory, Closeable 
     }
 
     @Override public InputStream create() {
-	return new CachingInputStream();
+	if (closed) {
+	     if (chunks == null) {
+	 	return NullInputStream.NULL_INPUT_STREAM;
+	     }
+	}
+	    return new CachingInputStream();	
+
+	// else if (chunks.size() == 1) {
+	// 	return new cfg.io.ByteArrayInputStream(chunks.get(0));
+	//     } else {
+	// 	return new CatInputStream(new ExIterator());
+	//     }
+	// } else {
+	//     return new CachingInputStream();
+	// }
     }
 
     class CachingInputStream extends InputStream {

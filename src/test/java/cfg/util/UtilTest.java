@@ -26,6 +26,8 @@ public class UtilTest
 		return strings[tmp];
 	    }
 	}
+
+	
 	ExIterable(String... _strings) {
 	    strings=_strings;
 	}

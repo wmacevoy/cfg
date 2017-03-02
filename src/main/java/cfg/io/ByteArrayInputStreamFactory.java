@@ -20,7 +20,7 @@ public class ByteArrayInputStreamFactory implements InputStreamFactory {
     }
 
     @Override public InputStream create() { 
-	return new ByteArrayInputStream(data,offset,length);
+	return new cfg.io.ByteArrayInputStream(data,offset,length);
     }
 
 }
