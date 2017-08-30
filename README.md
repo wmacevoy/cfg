@@ -28,9 +28,10 @@ Here PATTERN is a regex-like pattern for the randomness
 
 Some useful examples
 
-* `[A-Za-z0-9]{8-12}` from 8 to 12 alphanumeric characters (ex: `h75dQ0GypEsG`).
 * `(rock|paper|scissors)` one random pick (ex: `paper`).
-* `[0-9a-f]{4}(:[0-9a-f]{4}){7}` mac-like 128 bit key (ex: `8f38:a082:d902:fb19:3f91:9881:429e:096e`)
+* `[A-Za-z0-9]{8-12}` from 8 to 12 alphanumeric characters (ex: `h75dQ0GypEsG`).
+* `.([acdefhjmnprtwxyz]{4}.){8}` 128 bit key using unambigous symbols and one mobile keypad (ex: `.dyth.fxdm.ypzm.ftxr.xjff.trxa.znzc.frpx.`).
+* `:([0-9a-f]{4}:){8}` mac-like 128 bit key (ex: `:8f38:a082:d902:fb19:3f91:9881:429e:096e:`).
 
 ## Step 3: Share and set the key.
 
