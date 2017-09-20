@@ -2,7 +2,7 @@ package cfg.io;
 
 import java.io.*;
 
-public class TimeoutCachingInputStreamFactory implements InputStreamFactory {
+public class TimeoutCachingInputStreamFactory extends DecoratedInputStreamFactory {
     private InputStreamFactory factory;
     private long timeout;
 
@@ -13,8 +13,18 @@ public class TimeoutCachingInputStreamFactory implements InputStreamFactory {
 	factory=_factory;
 	timeout=_timeout;
 	cachingFactory=null;
-	stale=System.currentTimeMillis()-2*timeout-1;
+	stale=Long.MIN_VALUE;
     }
+
+    @Override public void close() throws IOException {
+	try {
+	    if (cachingFactory != null) cachingFactory.close();
+	} finally {
+	    if (factory != null) factory.close();
+	}
+    }
+
+    @Override protected InputStreamFactory getDecorated() { return factory; }
 
     @Override public InputStream create() throws IOException {
 	if (timeout <= 0) {

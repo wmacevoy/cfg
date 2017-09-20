@@ -12,4 +12,7 @@ class ResourcesInputStreamFactory implements InputStreamFactory {
     @Override public InputStream create() throws IOException {
 	return new ResourcesInputStream(iterable.iterator());
     }
+    @Override public void close() {
+	iterable = null;
+    }
 }

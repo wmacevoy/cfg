@@ -213,7 +213,7 @@ public class Cipher {
     }
 
     public static final String key(double bits) {
-	String symbols = "ABDEGHJLNQR34679";	
-	return key(bits,symbols,4,'-');
+	String symbols = "acdefhjmnprtwxyz";
+	return key(bits,symbols,4,'.');
     }
 }

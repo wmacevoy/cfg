@@ -5,7 +5,7 @@ import java.io.*;
 import cfg.util.*;
 
 
-public class CachingInputStreamFactory implements InputStreamFactory, Closeable {
+public class CachingInputStreamFactory extends DecoratedInputStreamFactory {
     public static final int BLOCKSIZE = 4096;
 
     private volatile ArrayList<byte[]> chunks = null;
@@ -15,6 +15,8 @@ public class CachingInputStreamFactory implements InputStreamFactory, Closeable 
     private Object lock = new Object();
 
     private InputStreamFactory factory;
+
+    @Override protected InputStreamFactory getDecorated() { return factory; }
 
     public CachingInputStreamFactory(InputStreamFactory _factory) {
         factory=_factory;
@@ -36,7 +38,7 @@ public class CachingInputStreamFactory implements InputStreamFactory, Closeable 
                          ExceptionalIterator<InputStream,IOException> {
         int k = 0;
         @Override public boolean hasNext() {
-            return k < (chunks != null ? chunks.size() : 0);
+            return k < chunks.size();
         }
         @Override public InputStream next() {
             int tmp = k;
@@ -48,20 +50,16 @@ public class CachingInputStreamFactory implements InputStreamFactory, Closeable 
 
     @Override public InputStream create() {
 	if (closed) {
-	     if (chunks == null) {
+	    int size = (chunks != null) ? chunks.size() : 0;
+	    if (size == 0) {
 	 	return NullInputStream.NULL_INPUT_STREAM;
+	    } else if (chunks.size() == 1) {
+		return new cfg.io.ByteArrayInputStream(chunks.get(0));
+	    } else {
+		return new CatInputStream(new ExIterator());
 	     }
 	}
-	    return new CachingInputStream();	
-
-	// else if (chunks.size() == 1) {
-	// 	return new cfg.io.ByteArrayInputStream(chunks.get(0));
-	//     } else {
-	// 	return new CatInputStream(new ExIterator());
-	//     }
-	// } else {
-	//     return new CachingInputStream();
-	// }
+	return new CachingInputStream();
     }
 
     class CachingInputStream extends InputStream {

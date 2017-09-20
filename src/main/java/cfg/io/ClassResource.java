@@ -68,6 +68,19 @@ public class ClassResource implements Resource {
 	}
 	
     }
+
+    @Override public void close() throws IOException {
+	name=null;
+	clazz=null;
+	path=null;
+	url=null;
+	jar=null;
+	try {
+	    file.close();
+	} finally {
+	    file = null;
+	}
+    }
     
     @Override public ExceptionalIterator<Resource, IOException> iterator() throws IOException {
 	if (jar != null) {

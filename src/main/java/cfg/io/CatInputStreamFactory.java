@@ -13,4 +13,8 @@ public class CatInputStreamFactory implements InputStreamFactory {
     @Override public InputStream create() throws IOException {
 	return new CatInputStream(iterable.iterator());
     }
+
+    @Override public void close() {
+	iterable = null;
+    }
 }

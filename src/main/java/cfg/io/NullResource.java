@@ -8,9 +8,6 @@ public class NullResource extends NullInputStreamFactory implements Resource {
     public NullResource(String _name) {
 	name=_name;
     }
-    NullResource() {
-	name = "null";
-    }
     @Override public String getName() { return name; }
 
     public static final ExceptionalIterator<Resource, IOException> EMPTY = ExceptionalIterators.<Resource,IOException>empty();

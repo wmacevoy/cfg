@@ -20,6 +20,10 @@ public class InputStreamFactoryResource implements Resource {
         return factory.create();
     }
 
+    @Override public void close() throws IOException {
+        factory.close();
+    }
+    
     @Override public ExceptionalIterator<Resource,IOException> iterator() throws IOException {
 	CodeStream codes = new InputStreamCodeStream(create());
 	CodeStreamResourceCompiler compiler = new CodeStreamResourceCompiler(codes);

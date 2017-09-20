@@ -36,6 +36,7 @@ public class CatInputStream extends InputStream {
     @Override public int read(byte bytes[], int offset, int length) 
 	throws IOException 
     {
+	if (length <= 0) return 0;
 	int result = 0;
 	while (length > 0 && !eof) {
 	    int partial = stream.read(bytes,offset,length);
@@ -47,10 +48,11 @@ public class CatInputStream extends InputStream {
 		nextStream();
 	    }
 	}
-	return result != 0 ? result : (eof ? -1 : 0);
+	return result != 0 ? result : -1;
     }
 	
     @Override public long skip(long length) throws IOException {
+	if (length <= 0) return 0;
 	int result = 0;
 	while (length > 0 && !eof) {
 	    long partial = stream.skip(length);
@@ -61,7 +63,7 @@ public class CatInputStream extends InputStream {
 		nextStream();
 	    }
 	}
-	return result;
+	return result != 0 ? result : -1;
     }
 
     @Override public int available() throws IOException {

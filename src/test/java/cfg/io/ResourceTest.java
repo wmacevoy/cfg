@@ -40,6 +40,12 @@ public class ResourceTest {
 	return new FileResource(file);
     }
 
+    @Test public void testNullResource() throws IOException {
+	Resource resource = new NullResource("null");
+	assertEquals(string(resource),"");
+	assertFalse(resource.iterator().hasNext());
+    }
+
     @Test public void testInputStreamFactoryResource() throws IOException {
 	String value = "<hi>there</hi><bye>now</bye>";
 	Resource resource = resource("test",value);

@@ -9,6 +9,8 @@ public class FileInputStreamFactory implements InputStreamFactory {
 	file=_file;
     }
 
+    @Override public void close() { file = null; }
+
     static class ExIterator implements ExceptionalIterator<InputStream,IOException> {
 	File[] files;
 	int k=0;

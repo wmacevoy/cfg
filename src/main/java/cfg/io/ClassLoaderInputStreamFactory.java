@@ -32,6 +32,11 @@ public class ClassLoaderInputStreamFactory implements InputStreamFactory {
 	path=_path.clone();
     }
 
+    @Override public void close() {
+	loader = null;
+	path = null;
+    }
+
     @Override public InputStream create() throws IOException {
 	final Path[] paths = locate();
 	if (paths[0] == null || paths[1] == null) {
@@ -43,6 +48,7 @@ public class ClassLoaderInputStreamFactory implements InputStreamFactory {
 		    @Override public InputStream create() throws IOException {
 			return loader.getResourceAsStream(paths[0].toString());
 		    }
+		    @Override public void close() {}
 		};
 	    Resource resource = new InputStreamFactoryResource("tmp",factory);
 	    return Resources.cd(resource,paths[1]).create();

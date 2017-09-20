@@ -14,6 +14,7 @@ public class TimeoutCachingInputStreamFactoryTest {
 	    String s = Double.toString((System.currentTimeMillis())/1000.0);
 	    return InputStreams.create(s);
 	}
+	@Override public void close() {}
     }
 
     void sleep(double seconds) {

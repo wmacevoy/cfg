@@ -85,7 +85,6 @@ public class GeneratorTest
 
     @Test public void testRandomRepeatGenerator() {
 	Generator g = new RandomGenerator("x{3,5}");
-	System.out.println("repeat: " + g.toString());
 	assertEquals(g.toString(),"x{3,5}->'x'{3,5}");
 	for (int i=0; i<10; ++i) {
 	    String ans = g.generate();

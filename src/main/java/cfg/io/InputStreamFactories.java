@@ -45,4 +45,32 @@ public class InputStreamFactories {
     public static String string(InputStreamFactory factory) throws IOException {
 	return InputStreams.string(factory.create());
     }
+
+    public InputStreamFactory caching(InputStreamFactory factory) {
+	if (factory instanceof NullInputStreamFactory
+	    ||factory instanceof ByteArrayInputStreamFactory
+	    ||factory instanceof CachingInputStreamFactory
+	    ||((factory instanceof DecoratedInputStreamFactory) &&
+	       ((DecoratedInputStreamFactory) factory).decorates(CachingInputStreamFactory.class) != null)) {
+	    return factory;
+	}
+	return new CachingInputStreamFactory(factory);
+    }
+
+    public InputStreamFactory caching(InputStreamFactory factory, long timeout) {
+	if (factory instanceof NullInputStreamFactory
+	    ||factory instanceof ByteArrayInputStreamFactory
+	    ||factory instanceof CachingInputStreamFactory
+	    ||((factory instanceof DecoratedInputStreamFactory) &&
+	       ((DecoratedInputStreamFactory) factory).decorates(CachingInputStreamFactory.class) != null)) {
+	    return factory;
+	}
+	if (timeout <= 0) {
+	    return factory;
+	} else if (timeout == Long.MAX_VALUE) {
+	    return new CachingInputStreamFactory(factory);
+	} else {
+	    return new TimeoutCachingInputStreamFactory(factory,timeout);
+	}
+    }
 }

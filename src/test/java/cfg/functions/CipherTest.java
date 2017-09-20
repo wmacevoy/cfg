@@ -98,12 +98,10 @@ public class CipherTest
 	String rx = group + "-" + group;
 
 	String key = Cipher.key(32);
-	System.out.println("key: " + key);
 	
 	assertTrue(key.matches(rx));
 	for (int i=0; i<10; ++i) {
 	    String altKey = Cipher.key(32);
-	    System.out.println("alt key: " + altKey);
 	    assertTrue(altKey.matches(rx));
 	    assertNotEquals(key,altKey);
 	}

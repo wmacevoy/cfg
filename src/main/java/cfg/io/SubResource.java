@@ -17,6 +17,15 @@ public class SubResource implements Resource {
 	path.normalize();
     }
 
+    @Override public void close() throws IOException {
+	path=null;
+	try {
+	    resource.close();
+	} finally {
+	    resource = null;
+	}
+    }
+
 
     @Override public String getName() {
 	return path.size() == 0 ? resource.getName() : path.get(path.size()-1);

@@ -57,7 +57,8 @@ public class Cfg
             put("encrypt",new cfg.functions.EncryptFunction());
             put("decrypt",new cfg.functions.DecryptFunction());
             put("random",new cfg.functions.RandomFunction());
-            put("key",new cfg.functions.KeyFunction());	    
+            put("key",new cfg.functions.KeyFunction());
+            put("sha256",new cfg.functions.Sha256Function());
         }};
 
     Function defaultFunction = new cfg.functions.DefaultFunction();
@@ -282,6 +283,7 @@ public class Cfg
 			@Override public InputStream create() throws IOException {
 			    return load(file);
 			}
+			@Override public void close() {};
 		    };
 		    
 		InputStreamFactory tail = InputStreamFactories.create("</" + base + ">\n");
@@ -322,7 +324,7 @@ public class Cfg
 	Cfg cfg = null;
 	if (args[0].equals("--root")) {
 	    cfg = new Cfg(args[1]);
-	    args=Arrays.copyOfRange(args,1,args.length);
+	    args=Arrays.copyOfRange(args,2,args.length);
 	} else {
 	    cfg = new Cfg();
 	}
