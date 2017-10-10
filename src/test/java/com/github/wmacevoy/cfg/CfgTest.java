@@ -1,4 +1,4 @@
-package com.wmacevoy.cfg;
+package com.github.wmacevoy.cfg;
 
 import com.github.wmacevoy.cfg.functions.RandomGenerator;
 import com.github.wmacevoy.cfg.Cfg;
